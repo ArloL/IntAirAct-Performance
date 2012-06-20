@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jMeter-Tests" basedir=".">
+
+    <property name="users" value="1"/>
+    <property name="runtime" value="10"/>
+    <property name="sleep" value="2"/>
+    <property name="jmeterhome" value="${basedir}/apache-jmeter-2.6"/>
+    <property name="host" value="127.0.0.1"/>
+    <property name="hostpref" value=""/>
+    
+    <property name="sql.driverlocation" value="${basedir}/lib/mysql-connector.jar"/>
+    <property name="sql.driver" value="org.gjt.mm.mysql.Driver"/>
+    <property name="sql.database" value="jmeter"/>
+    <property name="sql.url" value="jdbc:mysql://localhost/${sql.database}"/>
+    
+    <property name="sql.user" value="jmeter"/>
+    <property name="sql.pass" value="jmeter"/>
+    
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+
+	<taskdef name="jmeter" classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask">
+		<classpath>
+			<pathelement location="${jmeterhome}/extras/ant-jmeter-1.0.9.jar" />
+		</classpath>
+	</taskdef>
+	
+	<target name="clean">
+    	<delete dir="${basedir}/sql">
+            <include name="**/*.sql"/>
+        </delete>
+    	<delete dir="${basedir}/jtl">
+            <include name="**/*.jtl"/>
+        </delete>
+    	<delete dir="${basedir}/csv">
+            <include name="**/*.csv"/>
+        </delete>
+        <delete dir="${basedir}/html">
+            <include name="**/*.html"/>
+        </delete>
+	</target>
+	
+	<target name="transform">
+    	<xslt
+            basedir="${basedir}/jtl"
+            destdir="${basedir}/html"
+            extension=".html"
+            style="${jmeterhome}/extras/jmeter-results-report_21.xsl"/>
+	</target>
+	
+	<target name="convert">
+        <foreach target="convertCSVtoSQL" param="csvfile">
+            <path>
+                <fileset dir="${basedir}/csv">
+                    <include name="*.csv"/>
+                </fileset>
+            </path>
+        </foreach>
+	</target>
+	
+	<target name="convertCSVtoSQL">
+	    <echo message="${csvfile}" />
+	    <basename property="sqlfile" file="${csvfile}" suffix=".csv" />
+	    <exec executable="/bin/sh">
+    	    <arg line='-c "${basedir}/csv2sql.php ${csvfile}  &gt; ${basedir}/sql/${sqlfile}.sql"'/>
+        </exec>
+	</target>
+	
+	<target name="import">
+	    <foreach target="importSQL" param="sqlfile">
+            <path>
+                <fileset dir="${basedir}/sql">
+                    <include name="*.sql"/>
+                </fileset>
+            </path>
+        </foreach>
+	</target>
+	
+	<target name="importSQL">
+	    <echo message="mysql5 -u ${sql.user} --password=${sql.pass} ${sql.database} &lt; ${sqlfile}"/>
+    	<exec executable="/bin/sh">
+            <arg line='-c "mysql5 -u ${sql.user} --password=${sql.pass} ${sql.database} &lt; ${sqlfile}"'/>
+        </exec>
+	</target>
+	
+	<target name="run">
+    	<antcall target="run-no-eacc" />
+		<sleep seconds="${sleep}"/>
+		<antcall target="run-hiphop" />
+		<sleep seconds="${sleep}"/>
+		<antcall target="run-eacc" />
+		<sleep seconds="${sleep}"/>
+		<antcall target="run-http-xml">
+		    <param name="port" value="23230" />
+		    <param name="path" value="" />
+		    <param name="logPrefix" value="java" />
+		</antcall>
+		<sleep seconds="${sleep}"/>
+		<antcall target="run-tcp-string" />
+	</target>
+	
+	<target name="run-windows">
+		<antcall target="run-test">
+			<param name="host" value="arlo-windows-7.local." />
+		    <param name="port" value="12345" />
+		    <param name="path" value="" />
+		    <param name="logPrefix" value="windows" />
+		    <param name="testPlan" value="jMeter Testplan" />
+		</antcall>
+	</target>
+	
+	<target name="run-javahttp">
+		<antcall target="run-http-xml">
+		    <param name="port" value="23240" />
+		    <param name="path" value="" />
+		    <param name="logPrefix" value="java" />
+		</antcall>
+	</target>
+	
+	<target name="run-hiphop">
+	    <antcall target="run-http-xml">
+		    <param name="port" value="81" />
+		    <param name="path" value="" />
+		    <param name="logPrefix" value="hiphop" />
+		</antcall>
+	</target>
+	
+	<target name="run-eacc">
+	    <antcall target="run-http-xml">
+		    <param name="port" value="80" />
+		    <param name="path" value="~ArloLOK/ws/primegame" />
+		    <param name="logPrefix" value="apache-eacc" />
+		</antcall>
+	</target>
+	
+	<target name="run-no-eacc">
+	    <antcall target="run-http-xml">
+		    <param name="port" value="80" />
+		    <param name="path" value="~ArloLOK/primegame-no-eacc" />
+		    <param name="logPrefix" value="apache-no-eacc" />
+		</antcall>
+	</target>
+	
+	<target name="run-http-xml">
+	    <antcall target="run-test">
+	        <param name="testPlan" value="HTTP XML" />
+	        <param name="logPrefix" value="${logPrefix}-http-xml" />
+	    </antcall>
+	</target>
+	
+	<target name="run-http-string">
+    	<antcall target="run-test">
+	        <param name="testPlan" value="HTTP String" />
+	        <param name="logPrefix" value="java-http-string" />
+	        <param name="port" value="23231" />
+	    </antcall>
+	</target>
+	
+	<target name="run-tcp-xml">
+	    <antcall target="run-test">
+	        <param name="testPlan" value="TCP XML" />
+	        <param name="logPrefix" value="java-tcp-xml" />
+	        <param name="port" value="23232" />
+	    </antcall>
+    </target>
+	
+	<target name="run-tcp-string">
+	    <antcall target="run-test">
+	        <param name="testPlan" value="TCP String" />
+	        <param name="logPrefix" value="java-tcp-string" />
+	        <param name="port" value="23233" />
+	    </antcall>
+	</target>
+	
+	<target name="run-soap">
+    	<antcall target="run-test">
+	        <param name="testPlan" value="SOAP" />
+	        <param name="logPrefix" value="java-soap" />
+	        <param name="path" value="/primegame"/>
+	        <param name="port" value="23234" />
+	    </antcall>
+	</target>
+	
+	<target name="run-test">
+	    <jmeter
+    	    jmeterhome="${jmeterhome}"
+    	    testplan="${basedir}/${testPlan}.jmx"
+			resultLog="${basedir}/csv/${hostpref}-${logPrefix}-${users}-${runtime}.csv">
+			<property name="jmeter.save.saveservice.output_format" value="csv"/>
+			<property name="jmeter.save.saveservice.print_field_names" value="true"/>
+			<property name="users" value="${users}"/>
+			<property name="runtime" value="${runtime}"/>
+			<property name="host" value="${host}"/>
+			<property name="path" value="${path}"/>
+			<property name="port" value="${port}"/>
+		</jmeter>
+	</target>
+</project>
