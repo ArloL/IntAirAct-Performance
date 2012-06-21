@@ -38,7 +38,7 @@ while (!feof($file_handle)) {
            } else if ($i != 0) {
                echo ',';
            }
-           echo '(NULL, @ID, FROM_UNIXTIME(ROUND('.$data[$timeStamp].
+           echo '(NULL, @ID, '.($i+1).', FROM_UNIXTIME(ROUND('.$data[$timeStamp].
                '/1000)), '.$data[$elapsed].", '".$data[$label]."', '".$data[$responseCode]."', '".
                $data[$responseMessage]."', '".$data[$threadName]."', '".$data[$dataType].
                "', ('".$data[$success]."' = 'true'), ".$data[$bytes].', '.$data[$Latency].")\n";
