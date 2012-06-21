@@ -6,8 +6,8 @@
 	<property name="testPlan" value="jmeter-testplan"/>
 
 	<property name="users" value="1"/>
-    <property name="runtime" value="10"/>
-    <property name="sleep" value="2"/>
+	<property name="rampUp" value="1"/>
+    <property name="count" value="100"/>
     <property name="host" value="127.0.0.1"/>
     <property name="port" value="12345"/>
     <property name="path" value=""/>
@@ -82,14 +82,15 @@
 	    <jmeter
     	    jmeterhome="${jmeterhome}"
     	    testplan="${basedir}/${testPlan}.jmx"
-			resultLog="${basedir}/csv/${logPrefix}-${users}-${runtime}.csv">
+			resultLog="${basedir}/csv/${logPrefix}-${users}-${count}.csv">
 			<property name="jmeter.save.saveservice.output_format" value="csv"/>
 			<property name="jmeter.save.saveservice.print_field_names" value="true"/>
 			<property name="users" value="${users}"/>
-			<property name="runtime" value="${runtime}"/>
+			<property name="rampUp" value="${rampUp}"/>
+			<property name="count" value="${count}"/>
 			<property name="host" value="${host}"/>
-			<property name="path" value="${path}"/>
 			<property name="port" value="${port}"/>
+			<property name="path" value="${path}"/>
 		</jmeter>
 	</target>
 </project>
