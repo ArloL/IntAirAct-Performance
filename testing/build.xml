@@ -64,7 +64,7 @@
 	    <echo message="Converting ${csvfile}" />
 	    <basename property="sqlfile" file="${csvfile}" suffix=".csv" />
 	    <exec executable="/bin/sh">
-    	    <arg line='-c "${csv2sql} ${csvfile} &gt; ${basedir}/sql/${sqlfile}.sql"'/>
+    	    <arg line='-c "${basedir}/lib/csv2sql.php ${csvfile} &gt; ${basedir}/sql/${sqlfile}.sql"'/>
         </exec>
 	</target>
 	
