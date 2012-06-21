@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jMeter-Tests" basedir=".">
 
+	<property name="testPlan" value="jMeter Testplan"/>
+
 	<property name="users" value="1"/>
     <property name="runtime" value="10"/>
     <property name="sleep" value="2"/>
     <property name="host" value="127.0.0.1"/>
-    <property name="logPrefix" value="${host}"/>
-    <property name="testPlan" value="jMeter Testplan"/>
     <property name="port" value="12345"/>
     <property name="path" value=""/>
-    
+
+    <property name="logPrefix" value="${host}"/>
+
+    <property name="sql.executable" value="mysql"/>
     <property name="sql.database" value="jmeter"/>
     <property name="sql.user" value="jmeter"/>
     <property name="sql.password" value="jmeter"/>
-    
+
     <property file="build.properties" />
     
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="{ant.contrib.classpath}"/>
@@ -37,14 +40,6 @@
         <delete dir="${basedir}/html">
             <include name="**/*.html"/>
         </delete>
-	</target>
-	
-	<target name="transform">
-    	<xslt
-            basedir="${basedir}/jtl"
-            destdir="${basedir}/html"
-            extension=".html"
-            style="${jmeterhome}/extras/jmeter-results-report_21.xsl"/>
 	</target>
 	
 	<target name="convert">
@@ -77,9 +72,9 @@
 	</target>
 	
 	<target name="importSQL">
-	    <echo message="mysql5 -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"/>
+	    <echo message="${sql.executable} -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"/>
     	<exec executable="/bin/sh">
-            <arg line='-c "mysql5 -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"'/>
+            <arg line='-c "${sql.executable} -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"'/>
         </exec>
 	</target>
 	
