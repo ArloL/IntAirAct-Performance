@@ -10,9 +10,7 @@
     <property name="port" value="12345"/>
     <property name="path" value=""/>
     
-    <property name="sql.driver" value="org.gjt.mm.mysql.Driver"/>
     <property name="sql.database" value="jmeter"/>
-    <property name="sql.url" value="jdbc:mysql://localhost/${sql.database}"/>
     <property name="sql.user" value="jmeter"/>
     <property name="sql.password" value="jmeter"/>
     
@@ -81,7 +79,7 @@
 	<target name="importSQL">
 	    <echo message="mysql5 -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"/>
     	<exec executable="/bin/sh">
-            <arg line='-c "mysql5 -u ${sql.user} --password=${sql.pass} ${sql.database} &lt; ${sqlfile}"'/>
+            <arg line='-c "mysql5 -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"'/>
         </exec>
 	</target>
 	
