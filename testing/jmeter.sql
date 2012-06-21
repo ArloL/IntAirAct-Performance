@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 21, 2012 at 09:33 AM
+-- Generation Time: Jun 21, 2012 at 11:13 AM
 -- Server version: 5.1.62-log
 -- PHP Version: 5.3.12
 
@@ -52,11 +52,14 @@ CREATE TABLE IF NOT EXISTS `results` (
 
 CREATE TABLE IF NOT EXISTS `tests` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `executed` datetime NOT NULL,
-  `users` int(11) unsigned DEFAULT NULL,
-  `host` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `runtime` int(11) unsigned DEFAULT NULL,
+  `users` int(11) unsigned NOT NULL,
+  `host` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `count` int(11) unsigned DEFAULT NULL,
+  `average` double DEFAULT NULL,
+  `minimum` int(11) DEFAULT NULL,
+  `maximum` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
