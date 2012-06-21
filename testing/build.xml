@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jMeter-Tests" basedir=".">
 
+	<property file="build.properties" />
+
 	<property name="testPlan" value="jMeter Testplan"/>
 
 	<property name="users" value="1"/>
@@ -16,8 +18,6 @@
     <property name="sql.database" value="jmeter"/>
     <property name="sql.user" value="jmeter"/>
     <property name="sql.password" value="jmeter"/>
-
-    <property file="build.properties" />
     
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="{ant.contrib.classpath}"/>
 
