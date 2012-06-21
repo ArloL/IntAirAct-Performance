@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jMeter-Tests" basedir=".">
+
+	<property name="users" value="1"/>
+    <property name="runtime" value="10"/>
+    <property name="sleep" value="2"/>
+    <property name="host" value="127.0.0.1"/>
+    <property name="logPrefix" value="${host}"/>
+    <property name="testPlan" value="jMeter Testplan"/>
+    <property name="port" value="12345"/>
+    <property name="path" value=""/>
+    
+    <property name="sql.driver" value="org.gjt.mm.mysql.Driver"/>
+    <property name="sql.database" value="jmeter"/>
+    <property name="sql.url" value="jdbc:mysql://localhost/${sql.database}"/>
+    <property name="sql.user" value="jmeter"/>
+    <property name="sql.password" value="jmeter"/>
+    
+    <property file="build.properties" />
+    
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="{ant.contrib.classpath}"/>
+
+	<taskdef name="jmeter" classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask">
+		<classpath>
+			<pathelement location="${jmeterhome}/extras/ant-jmeter-1.0.9.jar" />
+		</classpath>
+	</taskdef>
+	
+	<target name="clean">
+    	<delete dir="${basedir}/sql">
+            <include name="**/*.sql"/>
+        </delete>
+    	<delete dir="${basedir}/jtl">
+            <include name="**/*.jtl"/>
+        </delete>
+    	<delete dir="${basedir}/csv">
+            <include name="**/*.csv"/>
+        </delete>
+        <delete dir="${basedir}/html">
+            <include name="**/*.html"/>
+        </delete>
+	</target>
+	
+	<target name="transform">
+    	<xslt
+            basedir="${basedir}/jtl"
+            destdir="${basedir}/html"
+            extension=".html"
+            style="${jmeterhome}/extras/jmeter-results-report_21.xsl"/>
+	</target>
+	
+	<target name="convert">
+		<mkdir dir="${basedir}/sql"/>
+        <foreach target="convertCSVtoSQL" param="csvfile">
+            <path>
+                <fileset dir="${basedir}/csv">
+                    <include name="*.csv"/>
+                </fileset>
+            </path>
+        </foreach>
+	</target>
+	
+	<target name="convertCSVtoSQL">
+	    <echo message="Converting ${csvfile}" />
+	    <basename property="sqlfile" file="${csvfile}" suffix=".csv" />
+	    <exec executable="/bin/sh">
+    	    <arg line='-c "${csv2sql} ${csvfile} &gt; ${basedir}/sql/${sqlfile}.sql"'/>
+        </exec>
+	</target>
+	
+	<target name="import">
+	    <foreach target="importSQL" param="sqlfile">
+            <path>
+                <fileset dir="${basedir}/sql">
+                    <include name="*.sql"/>
+                </fileset>
+            </path>
+        </foreach>
+	</target>
+	
+	<target name="importSQL">
+	    <echo message="mysql5 -u ${sql.user} --password=${sql.password} ${sql.database} &lt; ${sqlfile}"/>
+    	<exec executable="/bin/sh">
+            <arg line='-c "mysql5 -u ${sql.user} --password=${sql.pass} ${sql.database} &lt; ${sqlfile}"'/>
+        </exec>
+	</target>
+	
+	<target name="run-test">
+	    <jmeter
+    	    jmeterhome="${jmeterhome}"
+    	    testplan="${basedir}/${testPlan}.jmx"
+			resultLog="${basedir}/csv/${logPrefix}-${users}-${runtime}.csv">
+			<property name="jmeter.save.saveservice.output_format" value="csv"/>
+			<property name="jmeter.save.saveservice.print_field_names" value="true"/>
+			<property name="users" value="${users}"/>
+			<property name="runtime" value="${runtime}"/>
+			<property name="host" value="${host}"/>
+			<property name="path" value="${path}"/>
+			<property name="port" value="${port}"/>
+		</jmeter>
+	</target>
+</project>

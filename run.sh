@@ -1,3 +1,4 @@
 #!/bin/sh
-ant clean
-ant -Dusers=1 -Druntime=30 run-windows
+cd testing
+#ant clean
+ant -Druntime=100 -DlogPrefix=HelloServer run-test
