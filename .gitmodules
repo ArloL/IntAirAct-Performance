@@ -1,0 +1,15 @@
+[submodule "servers/HelloServer"]
+	path = servers/HelloServer
+	url = https://github.com/ArloL/HelloServer.git
+[submodule "servers/HelloCocoaHTTPServer"]
+	path = servers/HelloCocoaHTTPServer
+	url = https://github.com/ArloL/HelloCocoaHTTPServer.git
+[submodule "HelloRoutingServer"]
+	path = HelloRoutingServer
+	url = https://github.com/ArloL/HelloRoutingServer.git
+[submodule "servers/HelloRoutingServer"]
+	path = servers/HelloRoutingServer
+	url = https://github.com/ArloL/HelloRoutingServer.git
+[submodule "servers/HelloIntAirActServer"]
+	path = servers/HelloIntAirActServer
+	url = https://github.com/ArloL/HelloIntAirActServer.git
