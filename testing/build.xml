@@ -3,7 +3,7 @@
 
 	<property file="build.properties" />
 
-	<property name="testPlan" value="jMeter Testplan"/>
+	<property name="testPlan" value="jmeter-testplan"/>
 
 	<property name="users" value="1"/>
     <property name="runtime" value="10"/>
