@@ -51,7 +51,8 @@ while (!feof($file_handle)) {
 }
 
 echo ";\n";
-echo 'UPDATE tests SET count = (SELECT COUNT(*) FROM results WHERE test_id = @ID) WHERE id = @ID;'."\n";
+echo 'UPDATE tests SET count = (SELECT COUNT(id) FROM results WHERE test_id = @ID) WHERE id = @ID;'."\n";
+echo 'UPDATE tests SET errors = (SELECT COUNT(id) FROM results WHERE test_id = @ID AND success = 0) WHERE id = @ID;'."\n";
 echo 'UPDATE tests SET average = (SELECT AVG(elapsed) FROM results WHERE test_id = @ID) WHERE id = @ID;'."\n";
 echo 'UPDATE tests SET minimum = (SELECT MIN(elapsed) FROM results WHERE test_id = @ID) WHERE id = @ID;'."\n";
 echo 'UPDATE tests SET maximum = (SELECT MAX(elapsed) FROM results WHERE test_id = @ID) WHERE id = @ID;'."\n";
